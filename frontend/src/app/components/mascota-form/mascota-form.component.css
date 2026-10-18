@@ -1,0 +1,88 @@
+.form-tarjeta {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.form-tarjeta h3 {
+  font-weight: 700;
+  margin: 0 0 16px;
+}
+
+.aviso {
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.error {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.grid-form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+@media (min-width: 600px) {
+  .grid-form {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 16px;
+  }
+  .col-total {
+    grid-column: 1 / -1;
+  }
+}
+
+.zona-foto {
+  margin: 16px 0;
+}
+
+.preview-foto {
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.preview-foto img {
+  width: 100%;
+  max-height: 250px;
+  object-fit: contain;
+  display: block;
+  background-color: #f5f5f5;
+}
+
+.btn-quitar-foto {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+}
+
+.btn-quitar-foto:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.btn-subir-foto {
+  width: 100%;
+  padding: 24px;
+  border-style: dashed;
+}
+
+.boton-submit {
+  width: 100%;
+  margin-top: 16px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner-inline {
+  margin: 0 auto;
+}

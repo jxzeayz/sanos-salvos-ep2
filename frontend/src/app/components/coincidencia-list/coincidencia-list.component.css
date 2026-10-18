@@ -1,0 +1,74 @@
+.centrado {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.coincidencia-card {
+  margin-bottom: 16px;
+}
+
+.coincidencia-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.coincidencia-titulo {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.score {
+  margin-bottom: 12px;
+}
+
+.score-fila {
+  display: flex;
+  justify-content: space-between;
+}
+
+.score-label {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.score-valor {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.coincidencia-ids {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.texto-secundario {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.coincidencia-fecha {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.6);
+  margin: 8px 0 0;
+}
+
+.aviso {
+  padding: 16px;
+  border-radius: 4px;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.vacio {
+  background: #e3f2fd;
+  color: #0d47a1;
+}
+
+.error {
+  background: #ffebee;
+  color: #c62828;
+}

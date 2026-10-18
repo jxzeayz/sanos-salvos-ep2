@@ -1,0 +1,97 @@
+<div class="pagina">
+  <h2 class="titulo">Mi Perfil</h2>
+
+  <mat-card class="tarjeta-perfil">
+    <div class="perfil-cabecera">
+      <img
+        class="avatar"
+        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Crect fill='%23f5a623' width='64' height='64' rx='32'/%3E%3Ctext fill='white' font-size='28' font-weight='700' x='32' y='42' text-anchor='middle' font-family='sans-serif'%3E{{ inicial }}%3C/text%3E%3C/svg%3E"
+        alt="Avatar" />
+      <div>
+        <h3>{{ authService.usuario?.nombre }}</h3>
+        <mat-chip color="primary" selected variant="outlined" size="small">{{ rolLabel }}</mat-chip>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="perfil-datos">
+      <div class="dato">
+        <mat-icon color="disabled">email</mat-icon>
+        <div>
+          <span class="dato-label">Correo electrónico</span>
+          <span class="dato-valor">{{ authService.usuario?.email }}</span>
+        </div>
+      </div>
+      <div class="dato">
+        <mat-icon color="disabled">phone</mat-icon>
+        <div>
+          <span class="dato-label">Teléfono</span>
+          <span class="dato-valor">{{ authService.usuario?.telefono || 'No registrado' }}</span>
+        </div>
+      </div>
+    </div>
+  </mat-card>
+
+  <mat-card class="tarjeta-perfil">
+    <div class="card-titulo">
+      <mat-icon color="disabled">edit</mat-icon>
+      <h3>Editar perfil</h3>
+    </div>
+    <div *ngIf="errorProfile" class="aviso error">{{ errorProfile }}</div>
+    <form [formGroup]="perfilForm" (ngSubmit)="guardarPerfil()" novalidate>
+      <div class="grid-dos">
+        <mat-form-field appearance="fill">
+          <mat-label>Nombre</mat-label>
+          <input matInput formControlName="nombre" required />
+          <mat-error>Ingresa tu nombre</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" required />
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Teléfono</mat-label>
+          <input matInput formControlName="telefono" inputmode="numeric" (input)="onTelefonoChange()" />
+        </mat-form-field>
+      </div>
+      <button mat-raised-button color="primary" type="submit" [disabled]="loadingProfile || perfilForm.invalid">
+        <mat-spinner *ngIf="loadingProfile" diameter="18" class="spinner-inline"></mat-spinner>
+        <span *ngIf="!loadingProfile">Guardar cambios</span>
+      </button>
+    </form>
+  </mat-card>
+
+  <mat-card class="tarjeta-perfil">
+    <div class="card-titulo">
+      <mat-icon color="disabled">lock</mat-icon>
+      <h3>Cambiar contraseña</h3>
+    </div>
+    <div *ngIf="errorPassword" class="aviso error">{{ errorPassword }}</div>
+    <form [formGroup]="passwordForm" (ngSubmit)="cambiarPassword()" novalidate>
+      <mat-form-field appearance="fill" class="ancho-completo">
+        <mat-label>Contraseña actual</mat-label>
+        <input matInput [type]="showCurrent ? 'text' : 'password'" formControlName="currentPassword" required autocomplete="current-password" />
+        <button mat-icon-button matSuffix type="button" (click)="showCurrent = !showCurrent" aria-label="Toggle visibility">
+          <mat-icon>{{ showCurrent ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+      </mat-form-field>
+      <div class="grid-dos">
+        <mat-form-field appearance="fill">
+          <mat-label>Nueva contraseña</mat-label>
+          <input matInput [type]="showNew ? 'text' : 'password'" formControlName="newPassword" required autocomplete="new-password" />
+          <button mat-icon-button matSuffix type="button" (click)="showNew = !showNew" aria-label="Toggle visibility">
+            <mat-icon>{{ showNew ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <mat-error>Mínimo 8 caracteres</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Confirmar contraseña</mat-label>
+          <input matInput type="password" formControlName="confirmPassword" required autocomplete="new-password" />
+        </mat-form-field>
+      </div>
+      <button mat-raised-button color="primary" type="submit" [disabled]="loadingPassword || passwordForm.invalid">
+        <mat-spinner *ngIf="loadingPassword" diameter="18" class="spinner-inline"></mat-spinner>
+        <span *ngIf="!loadingPassword">Cambiar contraseña</span>
+      </button>
+    </form>
+  </mat-card>
+</div>

@@ -1,0 +1,25 @@
+<mat-card class="login-tarjeta">
+  <mat-card-content>
+    <div class="login-cabecera">
+      <mat-icon color="primary">lock</mat-icon>
+      <h2>Iniciar sesión</h2>
+      <p class="login-subtitulo">Accede con tu cuenta de Identity Provider (Auth0)</p>
+    </div>
+
+    <button
+      mat-raised-button
+      color="primary"
+      class="ancho-completo boton-submit"
+      type="button"
+      (click)="iniciarSesion()"
+    >
+      <mat-icon>login</mat-icon>
+      <span>Ingresar con Auth0</span>
+    </button>
+
+    <p class="login-registrate">
+      ¿No tienes cuenta?
+      <a routerLink="/register">Regístrate aquí</a>
+    </p>
+  </mat-card-content>
+</mat-card>

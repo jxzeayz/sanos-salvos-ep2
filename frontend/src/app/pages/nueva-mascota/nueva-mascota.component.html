@@ -1,0 +1,16 @@
+<div class="pagina">
+  <ng-container *ngIf="loading; else estado">
+    <div class="centrado"><mat-spinner></mat-spinner></div>
+  </ng-container>
+
+  <ng-template #estado>
+    <ng-container *ngIf="!error; else errorBlock">
+      <h2>{{ isEdit ? 'Editar mascota' : 'Registrar nueva mascota' }}</h2>
+      <app-mascota-form [mascota]="mascota" [isEdit]="isEdit"></app-mascota-form>
+    </ng-container>
+  </ng-template>
+
+  <ng-template #errorBlock>
+    <div class="aviso error">{{ error }}</div>
+  </ng-template>
+</div>

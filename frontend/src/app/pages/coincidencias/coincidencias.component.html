@@ -1,0 +1,22 @@
+<div class="pagina">
+  <h2>Coincidencias</h2>
+  <p class="subtitulo">Ingresa el ID de tu mascota perdida para ver las posibles coincidencias detectadas.</p>
+
+  <div class="buscador">
+    <mat-form-field appearance="outline">
+      <mat-label>ID de mascota</mat-label>
+      <input matInput type="number" [(ngModel)]="mascotaId" />
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="buscar()" [disabled]="!mascotaId">
+      Buscar
+    </button>
+  </div>
+
+  <div *ngIf="buscado">
+    <app-coincidencia-list
+      [coincidencias]="coincidencias"
+      [loading]="loading"
+      [error]="error"
+    ></app-coincidencia-list>
+  </div>
+</div>

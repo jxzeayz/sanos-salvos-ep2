@@ -1,0 +1,85 @@
+.mascota-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.mascota-foto img {
+  width: 100%;
+  height: 200px;
+  object-fit: contain;
+  background-color: #f5f5f5;
+  display: block;
+}
+
+.mascota-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.mascota-nombre {
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+}
+
+.icono-pata {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.mascota-id {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.mascota-acciones {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mascota-datos {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 14px;
+  margin: 4px 0;
+}
+
+.mascota-desc {
+  font-size: 14px;
+  margin: 8px 0;
+}
+
+.mascota-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 8px 0;
+}
+
+.mascota-fecha {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.6);
+  margin-top: 8px;
+}
+
+.icono-fecha {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.eliminar-item {
+  color: #f44336;
+}

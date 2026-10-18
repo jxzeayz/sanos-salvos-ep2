@@ -1,0 +1,60 @@
+<div class="pagina">
+  <div class="cabecera">
+    <h2>Notificaciones</h2>
+    <button
+      mat-stroked-button
+      (click)="marcarTodasLeidas()"
+      [disabled]="notificaciones.length === 0 || noLeidas === 0"
+    >
+      <mat-icon>done_all</mat-icon>
+      Marcar todas leídas
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="centrado"><mat-spinner></mat-spinner></div>
+
+  <div *ngIf="error" class="aviso error">{{ error }}</div>
+
+  <ng-container *ngIf="!loading && !error">
+    <div *ngIf="notificaciones.length === 0" class="sin-notificaciones">
+      <mat-icon class="icono-grande">notifications_none</mat-icon>
+      <h3>No hay notificaciones</h3>
+      <p>Cuando se detecten coincidencias, aparecerán aquí.</p>
+    </div>
+
+    <mat-nav-list *ngIf="notificaciones.length > 0">
+      <ng-container *ngFor="let n of notificaciones; let i = index">
+        <mat-divider *ngIf="i > 0"></mat-divider>
+        <mat-list-item
+          [class.leida]="n.leida"
+          [class.no-leida]="!n.leida"
+          class="item-notificacion"
+        >
+          <div class="item-contenido">
+            <div class="item-titulo">
+              <span [class.semibold]="!n.leida">{{ n.titulo }}</span>
+              <mat-chip variant="outlined" size="small" [color]="tipoColor(n.tipo || '')">
+                {{ n.tipo }}
+              </mat-chip>
+            </div>
+            <p class="item-mensaje">{{ n.mensaje }}</p>
+            <span class="item-fecha">{{ fecha(n.enviadaEn) }}</span>
+          </div>
+
+          <div class="item-accion">
+            <button
+              mat-raised-button
+              color="primary"
+              *ngIf="puedeContactar(n)"
+              (click)="contactar(n)"
+              [disabled]="contactandoId === n.id"
+            >
+              <mat-icon>contact_phone</mat-icon>
+              {{ contactandoId === n.id ? 'Enviando...' : 'Contactar usuario' }}
+            </button>
+          </div>
+        </mat-list-item>
+      </ng-container>
+    </mat-nav-list>
+  </ng-container>
+</div>

@@ -1,0 +1,115 @@
+<mat-card class="form-tarjeta">
+  <mat-card-content>
+    <h3>{{ isEdit ? 'Editar mascota' : 'Registrar mascota' }}</h3>
+
+    <div *ngIf="error" class="aviso error">{{ error }}</div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <div class="grid-form">
+        <mat-form-field appearance="fill">
+          <mat-label>Nombre</mat-label>
+          <input matInput formControlName="nombre" required />
+          <mat-error>Ingresa el nombre</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Estado</mat-label>
+          <mat-select formControlName="estado">
+            <mat-option *ngFor="let e of estados" [value]="e.value">{{ e.label }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Especie</mat-label>
+          <mat-select formControlName="especie">
+            <mat-option *ngFor="let e of especies" [value]="e.value">{{ e.label }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Raza</mat-label>
+          <input matInput formControlName="raza" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Color</mat-label>
+          <input matInput formControlName="color" required />
+          <mat-error>Ingresa el color</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Tamaño</mat-label>
+          <mat-select formControlName="tamano">
+            <mat-option *ngFor="let t of tamanos" [value]="t.value">{{ t.label }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="col-total">
+          <mat-label>Descripción</mat-label>
+          <textarea matInput rows="3" formControlName="descripcion"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Latitud</mat-label>
+          <input matInput type="number" step="any" formControlName="latitud" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Longitud</mat-label>
+          <input matInput type="number" step="any" formControlName="longitud" />
+        </mat-form-field>
+
+        <button mat-stroked-button type="button" (click)="onGeolocate()">
+          <mat-icon>my_location</mat-icon>
+          Mi ubicación
+        </button>
+      </div>
+
+      <div class="zona-foto">
+        <input
+          #fotoInput
+          type="file"
+          accept="image/*"
+          hidden
+          (change)="onFotoChange($event)"
+        />
+        <ng-container *ngIf="fotoPreview; else sinFoto">
+          <div class="preview-foto">
+            <img [src]="fotoPreview" alt="Vista previa" />
+            <button
+              mat-icon-button
+              class="btn-quitar-foto"
+              type="button"
+              (click)="onQuitarFoto(); fotoInput.value = ''"
+              aria-label="Quitar foto"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </ng-container>
+        <ng-template #sinFoto>
+          <button
+            mat-stroked-button
+            type="button"
+            class="btn-subir-foto"
+            (click)="fotoInput.click()"
+          >
+            <mat-icon>photo_camera</mat-icon>
+            Subir foto de la mascota
+          </button>
+        </ng-template>
+      </div>
+
+      <button
+        mat-raised-button
+        color="primary"
+        class="boton-submit"
+        type="submit"
+        [disabled]="loading || form.invalid"
+      >
+        <mat-spinner *ngIf="loading" diameter="20" class="spinner-inline"></mat-spinner>
+        <span *ngIf="!loading">{{ isEdit ? 'Actualizar mascota' : 'Registrar mascota' }}</span>
+      </button>
+    </form>
+  </mat-card-content>
+</mat-card>

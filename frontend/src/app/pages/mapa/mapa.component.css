@@ -1,0 +1,16 @@
+.pagina {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 32px 16px;
+}
+
+.pagina h2 {
+  font-weight: 700;
+  margin: 0;
+  font-size: 24px;
+}
+
+.subtitulo {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 14px;
+}

@@ -1,0 +1,36 @@
+.navbar {
+  display: flex;
+  gap: 4px;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  margin-right: 16px;
+}
+
+.navbar-brand-icon {
+  margin-right: 4px;
+}
+
+.navbar-spacer {
+  flex: 1 1 auto;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.menu-usuario {
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.link-activo {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.navbar-usuario-nombre {
+  margin-left: 4px;
+}

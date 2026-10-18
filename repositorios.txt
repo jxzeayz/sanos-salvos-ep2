@@ -1,0 +1,118 @@
+REPOSITORIOS DEL PROYECTO — SANOS Y SALVOS
+DSY1107 Evaluación Parcial N°3 (Encargo) | DuocUC
+Estudiantes: Armando Calderón
+Docente: Jorge Canales Soto
+===============================================================
+
+REPOSITORIO PRINCIPAL
+---------------------
+URL: https://github.com/jxzeayz/sanos-salvos-2
+Descripción: Repositorio monorepo que contiene todos los componentes del
+             sistema Sanos y Salvos: frontend Angular 17, BFF y 9
+             microservicios Spring Boot, orquestados con Docker Compose
+             con Kong (API Manager), Auth0 (IDaaS) y Neon (BD cloud).
+
+Rama principal : main
+
+===============================================================
+
+COMPONENTES EN EL REPOSITORIO
+------------------------------
+
+1. Frontend (Angular 17)
+   Carpeta : /frontend
+   URL     : https://github.com/jxzeayz/sanos-salvos-2/tree/main/frontend
+   Descripción: Aplicación web Angular 17 con Angular Material y Leaflet.
+                Autenticación con Auth0 (Authorization Code + PKCE),
+                gestión de mascotas, mapa de reportes y detección de
+                coincidencias. Dockerizado con nginx (HTTPS) en puertos
+                443/80.
+
+2. BFF-Web (Backend For Frontend)
+   Carpeta : /bff-web
+   URL     : https://github.com/jxzeayz/sanos-salvos-2/tree/main/bff-web
+   Descripción: Punto de entrada único del frontend hacia los microservicios.
+                Spring Boot 3.2 + WebFlux. Valida los tokens JWT de Auth0
+                (RS256/JWKS) y actúa como proxy reactivo hacia los
+                microservicios. Puerto 8080 (interno, vía Kong).
+
+3. MS-Auth (Microservicio de Autenticación)
+   Carpeta : /ms-auth
+   URL     : https://github.com/jxzeayz/sanos-salvos-2/tree/main/ms-auth
+   Descripción: Perfil de usuarios sincronizado desde Auth0 por email
+                (upsert). Spring Boot 3.2 + Spring Security + BCrypt.
+                Roles: DUEÑO, CIUDADANO, VETERINARIO, ADMIN. BD db_auth.
+
+4. MS-Mascotas (Microservicio de Mascotas)
+   Carpeta : /ms-mascotas
+   URL     : https://github.com/jxzeayz/sanos-salvos-2/tree/main/ms-mascotas
+   Descripción: CRUD de mascotas perdidas y encontradas. Publica eventos
+                asíncronos en RabbitMQ al registrar una mascota. Aplica
+                Circuit Breaker con Resilience4j. Valida JWT de Auth0.
+                Puerto 8081.
+
+5. MS-Geolocalizacion (Microservicio de Geolocalización)
+   Carpeta : /ms-geolocalizacion
+   URL     : https://github.com/jxzeayz/sanos-salvos-2/tree/main/ms-geolocalizacion
+   Descripción: Almacena reportes geoespaciales usando PostGIS. Permite
+                búsquedas por radio (ST_DWithin) y cálculo de zonas con
+                mayor incidencia. Puerto 8082.
+
+6. MS-Matching (Microservicio de Motor de Coincidencias)
+   Carpeta : /ms-matching
+   URL     : https://github.com/jxzeayz/sanos-salvos-2/tree/main/ms-matching
+   Descripción: Motor de detección de coincidencias entre mascotas perdidas
+                y encontradas. Consume eventos RabbitMQ de ms-mascotas.
+                Patrón Strategy. Puerto 8083.
+
+7. MS-Notificaciones
+   Carpeta : /ms-notificaciones
+   URL     : https://github.com/jxzeayz/sanos-salvos-2/tree/main/ms-notificaciones
+   Descripción: Notificaciones por coincidencia vía RabbitMQ y envío de
+                correo SMTP. Puerto 8085.
+
+8. MS-Archivos
+   Carpeta : /ms-archivos
+   URL     : https://github.com/jxzeayz/sanos-salvos-2/tree/main/ms-archivos
+   Descripción: Almacenamiento de fotos de mascotas en MinIO. Valida
+                JWT de Auth0. Puerto 8086.
+
+9. MS-Auditoria
+   Carpeta : /ms-auditoria
+   URL     : https://github.com/jxzeayz/sanos-salvos-2/tree/main/ms-auditoria
+   Descripción: Registro de auditoría de operaciones vía RabbitMQ. Puerto 8087.
+
+10. MS-Rabbit-Admin (Administrador de RabbitMQ)
+   Carpeta : /ms-rabbit-admin
+   URL     : https://github.com/jxzeayz/sanos-salvos-2/tree/main/ms-rabbit-admin
+   Descripción: API REST (solo ADMIN, JWT de Auth0) para crear y eliminar
+                colas, exchanges y bindings con RabbitAdmin, publicar
+                mensajes de prueba e inspeccionar DLQs. Puerto 8088.
+
+MENSAJERÍA (EP3)
+----------------
+- Exchange de eventos: sanos-salvos.events (topic)
+- Exchange de dead-letter: sanos-salvos.dlx (direct)
+- Cada consumidor (matching, notificaciones, geolocalizacion, auditoria)
+  usa ACK manual y tiene su propia DLQ (q.<servicio>.dlq).
+- Mensajes publicados sin ruta → q.no-entregados.
+- Detalle: docs/mensajeria-rabbitmq.md
+
+INFRAESTRUCTURA
+---------------
+- Kong (API Manager) — gateway declarativo /bff y /api/* — puertos 8000/8001
+- Konga (panel API Manager) — puerto 8085
+- Auth0 (IDaaS) — emisor de JWT (RS256), rol vía claims de Action
+- Neon — bases PostgreSQL/PostGIS en la nube (7 bases)
+- RabbitMQ, MinIO locales (Docker)
+
+===============================================================
+
+DOCUMENTACIÓN
+-------------
+- docs/analisis-patrones-arquetipos.md — Análisis de patrones de diseño
+- docs/plan-branching.md              — Estrategia de branching Git Flow
+- docs/mensajeria-rabbitmq.md         — Topología RabbitMQ, ACK/DLQ y demo EP3
+- README.md                           — Guía de inicio rápido del proyecto
+
+===============================================================

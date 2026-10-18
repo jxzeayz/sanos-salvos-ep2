@@ -1,0 +1,66 @@
+<div class="pagina">
+  <div class="cabecera">
+    <h2>Mascotas</h2>
+    <button mat-raised-button color="primary" routerLink="/mascotas/nueva">
+      <mat-icon>add</mat-icon>
+      Nueva mascota
+    </button>
+  </div>
+
+  <div class="barra-filtros">
+    <mat-form-field appearance="outline" class="campo-busqueda">
+      <mat-label>Buscar</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input
+        matInput
+        placeholder="Buscar por nombre, raza, color..."
+        [value]="busqueda"
+        (input)="onBusquedaChange($any($event.target).value)"
+      />
+    </mat-form-field>
+
+    <mat-button-toggle-group
+      [value]="filtro"
+      (change)="onFiltroChange($event.value)"
+      class="toggle-filtros"
+    >
+      <mat-button-toggle *ngFor="let f of filtros" [value]="f.value">{{ f.label }}</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
+  <div *ngIf="loading" class="centrado"><mat-spinner></mat-spinner></div>
+
+  <div *ngIf="error" class="aviso error">
+    <p>{{ error }}</p>
+  </div>
+
+  <ng-container *ngIf="!loading && !error">
+    <div *ngIf="mascotas.length === 0" class="aviso vacio">
+      <ng-container *ngIf="filtro === 'mis'">
+        No tienes mascotas registradas.
+        <a routerLink="/mascotas/nueva" class="enlace">Registra tu primera mascota</a>
+      </ng-container>
+      <ng-container *ngIf="filtro !== 'mis'">No se encontraron mascotas con este filtro.</ng-container>
+    </div>
+
+    <div class="grid-mascotas">
+      <app-mascota-card
+        *ngFor="let m of mascotas"
+        [mascota]="m"
+        [usuarioId]="usuarioId"
+        (verCoincidencias)="verCoincidencias($event)"
+        (eliminar)="eliminarMascota($event)"
+        (cambiarEstado)="cambiarEstado($event)"
+      ></app-mascota-card>
+    </div>
+  </ng-container>
+
+  <div *ngIf="coincidencias !== null" class="seccion-coincidencias">
+    <h3>Coincidencias encontradas</h3>
+    <app-coincidencia-list
+      [coincidencias]="coincidencias"
+      [loading]="loadingCoinc"
+      [error]="errorCoinc"
+    ></app-coincidencia-list>
+  </div>
+</div>

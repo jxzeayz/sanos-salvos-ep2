@@ -1,0 +1,158 @@
+_format_version: "3.0"
+_transform: true
+
+# ─── Validador de tokens del API Manager ────────────────────────────────────
+# El plugin jwt se aplica de forma global: exige un access token firmado por
+# Auth0 (IDaaS) en TODAS las rutas /bff y /api/*. Cada jwt_secret corresponde
+# a una clave pública del JWKS del tenant (se identifica por el "kid" del
+# token para soportar rotación de claves). Las peticiones preflight (OPTIONS)
+# quedan excluidas para que CORS siga funcionando.
+consumers:
+  - username: auth0-access-tokens
+    jwt_secrets:
+      - key: sSiihXAZNc5uDQ_-iNwr7
+        algorithm: RS256
+        rsa_public_key: |
+          -----BEGIN PUBLIC KEY-----
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtrU/zxdvG7RlX2RvIBMB
+          GC0GZOtpDoJ18oRiUW+tKQlQHDW7pH6/y1eam4eBOFw/S1V1hD+du/41owI/HixJ
+          ygppCgwJveE/MYBtpaadJ2qffh0NKZLZzO14IxGPqtSCWF97NOhhV4L1rH0c92c8
+          3JqYW/K2DjaYi9NbZMAEUSn2yVCT4TI7NmNBkRwenFMgc8m6GHNR5zj0JTrwJbvf
+          qOciALKC5jgxk2ZVfFQzDT3/6mCB+iKCtpoYAQL1VPv1qEmZSOqTunEUPIjwPhc7
+          fZGtx9PnaqzIhE+nxoX4PjrQcZaS7ZMLQLf7Tr9jlg9G7WqWJaianIwyjmq2gjV0
+          JwIDAQAB
+          -----END PUBLIC KEY-----
+      - key: EFySVaNoA4JdKq4p6Qb4n
+        algorithm: RS256
+        rsa_public_key: |
+          -----BEGIN PUBLIC KEY-----
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAivKvuogzEJTPgane2bfh
+          Io0pDs8WVbScNu7QzAkVxwisi5kwHllICTEG6OH035Vr5Jr2bNsG3HllFhTMsVya
+          ibPepYhOvgQX/V0OiduzVthU4mKaIzolDVf6FqEDscaNWP9JOfOfblNE9rkeXKdP
+          7LfjUHfSYaXfCgWz7C6qBzTV3Fw91UqAfDRQgqIW6YJm5Fo8ajW6d2+Jk+CXXglc
+          /riDJWgWcW1vQNJgmIwaLbhEthUB+Lxb+HSLyGZN4QLnc2FCMhs4EZdLlEX5UUJA
+          ZgiRO0eNTRZO0od92QcaAKvFl3IE1H18wk+HAoTjpTFpyBP2mHyCsVJ6Q/enx5z+
+          jwIDAQAB
+          -----END PUBLIC KEY-----
+
+plugins:
+  - name: jwt
+    config:
+      key_claim_name: kid
+      claims_to_verify:
+        - exp
+      run_on_preflight: false
+
+services:
+  # ─── BFF (Backend for Frontend) ────────────────────────────────────────────
+  # Route: /bff/*  →  http://bff-web:8080/bff/*
+  - name: bff-web
+    url: http://bff-web:8080
+    routes:
+      - name: bff
+        paths:
+          - /bff
+        strip_path: false
+        preserve_host: false
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - "http://localhost:4200"
+            - "https://localhost"
+          methods:
+            - GET
+            - POST
+            - PUT
+            - PATCH
+            - DELETE
+            - OPTIONS
+          headers:
+            - Authorization
+            - Content-Type
+            - X-Requested-With
+          exposed_headers:
+            - Content-Type
+          credentials: true
+          preflight_continue: false
+
+  # ─── Microservicios expuestos individualmente (API Manager) ───────────────
+  # Route: /api/auth/* → ms-auth
+  - name: ms-auth
+    url: http://ms-auth:8084
+    routes:
+      - name: auth-api
+        paths:
+          - /api/auth
+        strip_path: false
+        preserve_host: false
+
+  # Route: /api/mascotas/* → ms-mascotas
+  - name: ms-mascotas
+    url: http://ms-mascotas:8081
+    routes:
+      - name: mascotas-api
+        paths:
+          - /api/mascotas
+        strip_path: false
+        preserve_host: false
+
+  # Route: /api/geo/* → ms-geolocalizacion
+  - name: ms-geolocalizacion
+    url: http://ms-geolocalizacion:8082
+    routes:
+      - name: geo-api
+        paths:
+          - /api/geo
+        strip_path: false
+        preserve_host: false
+
+  # Route: /api/matching/* → ms-matching
+  - name: ms-matching
+    url: http://ms-matching:8083
+    routes:
+      - name: matching-api
+        paths:
+          - /api/matching
+        strip_path: false
+        preserve_host: false
+
+  # Route: /api/notificaciones/* → ms-notificaciones
+  - name: ms-notificaciones
+    url: http://ms-notificaciones:8085
+    routes:
+      - name: notificaciones-api
+        paths:
+          - /api/notificaciones
+        strip_path: false
+        preserve_host: false
+
+  # Route: /api/archivos/* → ms-archivos
+  - name: ms-archivos
+    url: http://ms-archivos:8086
+    routes:
+      - name: archivos-api
+        paths:
+          - /api/archivos
+        strip_path: false
+        preserve_host: false
+
+  # Route: /api/audit/* → ms-auditoria
+  - name: ms-auditoria
+    url: http://ms-auditoria:8087
+    routes:
+      - name: auditoria-api
+        paths:
+          - /api/audit
+        strip_path: false
+        preserve_host: false
+
+  # Route: /api/rabbit/* → ms-rabbit-admin (administración de RabbitMQ, solo ADMIN)
+  - name: ms-rabbit-admin
+    url: http://ms-rabbit-admin:8088
+    routes:
+      - name: rabbit-admin-api
+        paths:
+          - /api/rabbit
+        strip_path: false
+        preserve_host: false

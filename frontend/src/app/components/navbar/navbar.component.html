@@ -1,0 +1,48 @@
+<mat-toolbar color="primary" class="navbar">
+  <button mat-icon-button class="navbar-brand-icon" routerLink="/" aria-label="Inicio">
+    <mat-icon>pets</mat-icon>
+  </button>
+  <a mat-button class="navbar-brand" routerLink="/">Sanos y Salvos</a>
+
+  <span class="navbar-spacer"></span>
+
+  <nav class="navbar-links">
+    <a mat-button routerLink="/" routerLinkActive="link-activo" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
+    <ng-container *ngIf="authService.isAuthenticated">
+      <a mat-button routerLink="/mascotas" routerLinkActive="link-activo">Mascotas</a>
+      <a mat-button routerLink="/coincidencias" routerLinkActive="link-activo">Coincidencias</a>
+      <button mat-button [matBadge]="noLeidasCount" matBadgeColor="warn" matBadgeOverlap="false" matBadgeSize="small" routerLink="/notificaciones" routerLinkActive="link-activo">
+        <mat-icon>notifications</mat-icon>
+        Notificaciones
+      </button>
+      <a mat-button routerLink="/mapa" routerLinkActive="link-activo">Mapa</a>
+    </ng-container>
+  </nav>
+
+  <ng-container *ngIf="authService.isAuthenticated; else sesionAnonima">
+    <button mat-button *ngIf="authService.isAdmin" routerLink="/admin" routerLinkActive="link-activo">Admin</button>
+    <button mat-button [matMenuTriggerFor]="userMenu" class="navbar-usuario" aria-label="Menú de usuario">
+      <mat-icon>account_circle</mat-icon>
+      <span class="navbar-usuario-nombre">{{ authService.usuario?.nombre || 'Mi cuenta' }}</span>
+    </button>
+    <mat-menu #userMenu="matMenu">
+      <button mat-menu-item disabled>
+        <span class="menu-usuario">{{ authService.usuario?.nombre }}</span>
+      </button>
+      <button mat-menu-item routerLink="/perfil">
+        <mat-icon>person</mat-icon>
+        <span>Mi Perfil</span>
+      </button>
+      <mat-divider></mat-divider>
+      <button mat-menu-item (click)="cerrarSesion()">
+        <mat-icon>logout</mat-icon>
+        <span>Cerrar Sesión</span>
+      </button>
+    </mat-menu>
+  </ng-container>
+
+  <ng-template #sesionAnonima>
+    <a mat-button routerLink="/login">Ingresar</a>
+    <a mat-stroked-button color="primary" routerLink="/register">Registrarse</a>
+  </ng-template>
+</mat-toolbar>

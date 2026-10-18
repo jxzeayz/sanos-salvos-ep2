@@ -1,0 +1,104 @@
+.pagina {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px 16px;
+}
+
+.cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.cabecera h2 {
+  font-weight: 700;
+  margin: 0;
+  font-size: 24px;
+}
+
+.centrado {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+.aviso {
+  padding: 16px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.error {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.sin-notificaciones {
+  text-align: center;
+  padding: 48px 0;
+}
+
+.icono-grande {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: rgba(0, 0, 0, 0.26);
+}
+
+.sin-notificaciones h3 {
+  margin: 16px 0 4px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.sin-notificaciones p {
+  color: rgba(0, 0, 0, 0.38);
+  font-size: 14px;
+}
+
+.item-notificacion {
+  align-items: flex-start;
+  padding: 16px 8px;
+}
+
+.item-notificacion.leida {
+  opacity: 0.6;
+}
+
+.item-notificacion.no-leida {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.item-contenido {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-titulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.semibold {
+  font-weight: 700;
+}
+
+.item-mensaje {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.6);
+  margin: 4px 0;
+}
+
+.item-fecha {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.item-accion {
+  display: flex;
+  align-items: center;
+}

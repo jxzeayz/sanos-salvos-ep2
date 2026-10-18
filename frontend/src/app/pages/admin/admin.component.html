@@ -1,0 +1,71 @@
+<div class="pagina">
+  <div class="encabezado-admin">
+    <h2 class="titulo">Panel de Administración</h2>
+    <a mat-flat-button color="primary" routerLink="/admin/rabbitmq">
+      <mat-icon>hub</mat-icon> Administrar RabbitMQ
+    </a>
+  </div>
+
+  <div *ngIf="loading" class="centrado"><mat-spinner></mat-spinner></div>
+  <div *ngIf="error" class="aviso error">{{ error }}</div>
+
+  <ng-container *ngIf="!loading && !error">
+    <div class="tarjetas-resumen">
+      <mat-card class="resumen">
+        <span class="resumen-num">{{ resumen.total }}</span>
+        <span class="resumen-label">Total mascotas</span>
+      </mat-card>
+      <mat-card class="resumen borde-warn">
+        <span class="resumen-num color-warn">{{ resumen.perdidas }}</span>
+        <span class="resumen-label">Perdidas</span>
+      </mat-card>
+      <mat-card class="resumen borde-primary">
+        <span class="resumen-num color-primary">{{ resumen.encontradas }}</span>
+        <span class="resumen-label">Encontradas</span>
+      </mat-card>
+      <mat-card class="resumen borde-accent">
+        <span class="resumen-num color-accent">{{ resumen.reunificadas }}</span>
+        <span class="resumen-label">Reunificadas</span>
+      </mat-card>
+    </div>
+
+    <mat-card class="tabla-tarjeta">
+      <table mat-table [dataSource]="mascotas" class="tabla-admin">
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef>ID</th>
+          <td mat-cell *matCellDef="let m">{{ m.id }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef>Nombre</th>
+          <td mat-cell *matCellDef="let m">{{ m.nombre }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="especie">
+          <th mat-header-cell *matHeaderCellDef>Especie</th>
+          <td mat-cell *matCellDef="let m">{{ m.especie }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="estado">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let m">
+            <mat-chip [color]="estadoColor(m.estado || '')" selected size="small">{{ m.estado }}</mat-chip>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="usuarioId">
+          <th mat-header-cell *matHeaderCellDef>Usuario ID</th>
+          <td mat-cell *matCellDef="let m">{{ m.usuarioId }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="fecha">
+          <th mat-header-cell *matHeaderCellDef>Fecha</th>
+          <td mat-cell *matCellDef="let m">{{ fecha(m.fechaReporte) }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </mat-card>
+  </ng-container>
+</div>

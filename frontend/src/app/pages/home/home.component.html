@@ -1,0 +1,38 @@
+<section class="hero">
+  <mat-icon class="hero-icono">pets</mat-icon>
+  <h1>Sanos y Salvos</h1>
+  <p class="hero-sub">Plataforma centralizada para la localización y recuperación de mascotas perdidas</p>
+  <div class="hero-acciones">
+    <button
+      *ngIf="authService.isAuthenticated"
+      mat-flat-button
+      color="accent"
+      routerLink="/mascotas/nueva"
+    >
+      Reportar mascota
+    </button>
+    <button
+      *ngIf="!authService.isAuthenticated"
+      mat-flat-button
+      color="accent"
+      routerLink="/register"
+    >
+      Crear cuenta
+    </button>
+    <button mat-stroked-button color="primary" routerLink="/mapa">Ver mapa</button>
+  </div>
+</section>
+
+<div class="seccion-como-funciona">
+  <h2>¿Cómo funciona?</h2>
+  <div class="grid-tarjetas">
+    <mat-card *ngFor="let t of tarjetas" class="tarjeta">
+      <mat-card-content>
+        <mat-icon class="tarjeta-icono" color="primary">{{ t.icono }}</mat-icon>
+        <h3>{{ t.titulo }}</h3>
+        <p class="tarjeta-desc">{{ t.desc }}</p>
+        <button mat-button color="primary" routerLink="{{ t.to }}">{{ t.label }}</button>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

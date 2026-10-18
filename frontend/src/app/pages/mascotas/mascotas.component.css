@@ -1,0 +1,76 @@
+.pagina {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 32px 16px;
+}
+
+.cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.cabecera h2 {
+  font-weight: 700;
+  margin: 0;
+  font-size: 24px;
+}
+
+.barra-filtros {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.campo-busqueda {
+  min-width: 250px;
+  flex: 1;
+  max-width: 320px;
+}
+
+.centrado {
+  display: flex;
+  justify-content: center;
+  padding: 32px 0;
+}
+
+.aviso {
+  padding: 16px;
+  border-radius: 4px;
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.vacio {
+  background: #e3f2fd;
+  color: #0d47a1;
+}
+
+.error {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.enlace {
+  color: #1a3a5c;
+  font-weight: 600;
+}
+
+.grid-mascotas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.seccion-coincidencias {
+  margin-top: 32px;
+}
+
+.seccion-coincidencias h3 {
+  font-weight: 600;
+}

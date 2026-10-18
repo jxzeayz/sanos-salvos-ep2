@@ -1,0 +1,25 @@
+<mat-card class="registro-tarjeta">
+  <mat-card-content>
+    <div class="registro-cabecera">
+      <mat-icon color="primary">person_add</mat-icon>
+      <h2>Crear cuenta</h2>
+      <p class="registro-subtitulo">El registro se gestiona por tu Identity Provider (Auth0)</p>
+    </div>
+
+    <button
+      mat-raised-button
+      color="primary"
+      class="ancho-completo boton-submit"
+      type="button"
+      (click)="crearCuenta()"
+    >
+      <mat-icon>person_add</mat-icon>
+      <span>Registrarme con Auth0</span>
+    </button>
+
+    <p class="registro-login">
+      ¿Ya tienes cuenta?
+      <a routerLink="/login">Inicia sesión</a>
+    </p>
+  </mat-card-content>
+</mat-card>

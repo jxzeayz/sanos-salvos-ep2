@@ -1,0 +1,52 @@
+<ng-container *ngIf="loading; else contenido">
+  <div class="centrado"><mat-spinner></mat-spinner></div>
+</ng-container>
+
+<ng-template #contenido>
+  <ng-container *ngIf="!error; else errorBlock">
+    <ng-container *ngIf="coincidencias.length > 0; else vacio">
+      <mat-card *ngFor="let c of coincidencias" class="coincidencia-card">
+        <mat-card-content>
+          <div class="coincidencia-head">
+            <span class="coincidencia-titulo">Coincidencia #{{ c.id }}</span>
+            <mat-chip [color]="estadoColor(c.estado || 'PENDIENTE')" selected size="small">
+              <mat-icon matChipAvatar>{{ estadoIcono(c.estado || 'PENDIENTE') }}</mat-icon>
+              {{ c.estado || 'PENDIENTE' }}
+            </mat-chip>
+          </div>
+
+          <div class="score">
+            <div class="score-fila">
+              <span class="score-label">Puntuación de coincidencia</span>
+              <span class="score-valor">{{ scorePct(c.scoreMatch) }}%</span>
+            </div>
+            <mat-progress-bar
+              mode="determinate"
+              [value]="scorePct(c.scoreMatch)"
+              [color]="scoreColor(c.scoreMatch)"
+            ></mat-progress-bar>
+          </div>
+
+          <div class="coincidencia-ids">
+            <span class="texto-secundario">Mascota perdida: <strong>#{{ c.mascotaPerdidaId }}</strong></span>
+            <span class="texto-secundario">Mascota encontrada: <strong>#{{ c.mascotaEncontradaId }}</strong></span>
+          </div>
+
+          <p *ngIf="c.fechaDeteccion" class="coincidencia-fecha">
+            Detectada: {{ fechaDeteccion(c.fechaDeteccion) }}
+          </p>
+        </mat-card-content>
+      </mat-card>
+    </ng-container>
+  </ng-container>
+</ng-template>
+
+<ng-template #vacio>
+  <div class="aviso vacio">
+    No se encontraron coincidencias para esta mascota.
+  </div>
+</ng-template>
+
+<ng-template #errorBlock>
+  <div class="aviso error">{{ error }}</div>
+</ng-template>

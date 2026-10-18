@@ -1,0 +1,67 @@
+<mat-card class="mascota-card">
+  <div class="mascota-foto">
+    <img [src]="fotoUrl || DEFAULT_IMG" [alt]="mascota.nombre" />
+  </div>
+
+  <mat-card-content>
+    <div class="mascota-head">
+      <div>
+        <h3 class="mascota-nombre">
+          <mat-icon class="icono-pata">pets</mat-icon>
+          {{ mascota.nombre }}
+        </h3>
+        <span class="mascota-id">#{{ mascota.id }}</span>
+      </div>
+
+      <div class="mascota-acciones">
+        <mat-chip [color]="estadoColor(mascota.estado)" selected size="small">
+          {{ estadoLabel(mascota.estado) }}
+        </mat-chip>
+        <button mat-icon-button size="small" *ngIf="esDueno" [matMenuTriggerFor]="menuPets">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menuPets="matMenu">
+          <button mat-menu-item [routerLink]="['/mascotas/editar', mascota.id]">
+            <mat-icon>edit</mat-icon>
+            <span>Editar</span>
+          </button>
+          <button *ngIf="mascota.estado !== 'REUNIFICADA'" mat-menu-item (click)="onCambiarEstado()">
+            <mat-icon>check_circle</mat-icon>
+            <span>Marcar Reunificada</span>
+          </button>
+          <mat-divider></mat-divider>
+          <button mat-menu-item class="eliminar-item" (click)="onEliminar()">
+            <mat-icon>delete</mat-icon>
+            <span>Eliminar</span>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+
+    <p class="mascota-datos">
+      {{ especieLabel(mascota.especie) }}<span *ngIf="mascota.raza"> · {{ mascota.raza }}</span
+      ><span *ngIf="mascota.color"> · {{ mascota.color }}</span>
+    </p>
+
+    <p *ngIf="mascota.descripcion" class="mascota-desc">{{ mascota.descripcion }}</p>
+
+    <div class="mascota-chips">
+      <mat-chip *ngIf="mascota.tamano" variant="outlined" size="small">
+        Tamaño: {{ tamanoLabel(mascota.tamano) }}
+      </mat-chip>
+      <mat-chip *ngIf="mascota.latitud" variant="outlined" color="primary" selected size="small">
+        <mat-icon matChipAvatar>location_on</mat-icon>
+        Con ubicación
+      </mat-chip>
+    </div>
+
+    <div class="mascota-fecha">
+      <mat-icon class="icono-fecha">calendar_today</mat-icon>
+      <span>Reportado: {{ fechaReporte }}</span>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions *ngIf="puedoVerCoincidencias">
+    <button mat-stroked-button (click)="onVerCoincidencias()">Ver coincidencias</button>
+  </mat-card-actions>
+</mat-card>

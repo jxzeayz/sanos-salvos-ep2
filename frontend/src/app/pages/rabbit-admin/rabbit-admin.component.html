@@ -1,0 +1,234 @@
+<div class="pagina">
+  <div class="encabezado">
+    <div>
+      <h2 class="titulo">Administración de RabbitMQ</h2>
+      <p class="subtitulo">Colas, exchanges y bindings del broker. Los recursos del sistema están protegidos contra eliminación.</p>
+    </div>
+    <div class="acciones-encabezado">
+      <a mat-stroked-button routerLink="/admin"><mat-icon>arrow_back</mat-icon> Panel</a>
+      <button mat-flat-button color="primary" (click)="recargar()" [disabled]="cargando">
+        <mat-icon>refresh</mat-icon> Actualizar
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="cargando" class="centrado"><mat-spinner diameter="40"></mat-spinner></div>
+  <div *ngIf="error" class="aviso error">{{ error }}</div>
+
+  <mat-tab-group *ngIf="!error" animationDuration="0ms">
+    <!-- ─── Colas ─────────────────────────────────────────────────────── -->
+    <mat-tab label="Colas ({{ colas.length }})">
+      <mat-card class="tarjeta">
+        <h3>Nueva cola</h3>
+        <form [formGroup]="formCola" (ngSubmit)="crearCola()" class="formulario">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre</mat-label>
+            <input matInput formControlName="nombre" placeholder="q.pruebas" />
+            <mat-error>Letras, números, . _ - : (no puede comenzar con amq.)</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>TTL mensajes (ms)</mat-label>
+            <input matInput type="number" formControlName="ttlMensajesMs" />
+            <mat-error>Entre 1 y 604800000</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Máx. mensajes</mat-label>
+            <input matInput type="number" formControlName="maxMensajes" />
+            <mat-error>Entre 1 y 1000000</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Dead-letter exchange</mat-label>
+            <mat-select formControlName="deadLetterExchange">
+              <mat-option value="">(ninguno)</mat-option>
+              <mat-option *ngFor="let ex of exchanges" [value]="ex.nombre">{{ ex.nombre }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Dead-letter routing key</mat-label>
+            <input matInput formControlName="deadLetterRoutingKey" placeholder="q.pruebas.dlq" />
+            <mat-error>Caracteres no permitidos</mat-error>
+          </mat-form-field>
+          <mat-checkbox formControlName="durable">Durable</mat-checkbox>
+          <button mat-flat-button color="primary" type="submit">Crear cola</button>
+        </form>
+      </mat-card>
+
+      <mat-card class="tarjeta">
+        <table mat-table [dataSource]="colas" class="tabla">
+          <ng-container matColumnDef="nombre">
+            <th mat-header-cell *matHeaderCellDef>Cola</th>
+            <td mat-cell *matCellDef="let c">
+              <span [class.dlq]="esDlq(c)">{{ c.nombre }}</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="mensajes">
+            <th mat-header-cell *matHeaderCellDef>Mensajes</th>
+            <td mat-cell *matCellDef="let c" [class.alerta]="esDlq(c) && c.mensajes > 0">{{ c.mensajes }}</td>
+          </ng-container>
+          <ng-container matColumnDef="consumidores">
+            <th mat-header-cell *matHeaderCellDef>Consumidores</th>
+            <td mat-cell *matCellDef="let c">{{ c.consumidores }}</td>
+          </ng-container>
+          <ng-container matColumnDef="dlq">
+            <th mat-header-cell *matHeaderCellDef>DLQ</th>
+            <td mat-cell *matCellDef="let c">{{ dlqDe(c) }}</td>
+          </ng-container>
+          <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let c" class="acciones">
+              <button mat-icon-button matTooltip="Ver mensajes" (click)="verMensajes(c)"><mat-icon>visibility</mat-icon></button>
+              <button mat-icon-button matTooltip="Vaciar" (click)="purgarCola(c)"><mat-icon>cleaning_services</mat-icon></button>
+              <button mat-icon-button color="warn" matTooltip="Eliminar" (click)="eliminarCola(c)"><mat-icon>delete</mat-icon></button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="columnasColas"></tr>
+          <tr mat-row *matRowDef="let row; columns: columnasColas"></tr>
+        </table>
+      </mat-card>
+
+      <mat-card class="tarjeta" *ngIf="colaInspeccionada">
+        <h3>Mensajes en {{ colaInspeccionada }} <small>(se leen sin consumirlos)</small></h3>
+        <p *ngIf="!mensajes.length" class="vacio">La cola no tiene mensajes.</p>
+        <div *ngFor="let m of mensajes" class="mensaje">
+          <div class="mensaje-meta">
+            <span><strong>Routing key:</strong> {{ m.routingKey }}</span>
+            <span *ngIf="motivoDlq(m)" class="alerta"><strong>Motivo DLQ:</strong> {{ motivoDlq(m) }}</span>
+          </div>
+          <pre>{{ json(m.payload) }}</pre>
+        </div>
+      </mat-card>
+    </mat-tab>
+
+    <!-- ─── Exchanges ─────────────────────────────────────────────────── -->
+    <mat-tab label="Exchanges ({{ exchanges.length }})">
+      <mat-card class="tarjeta">
+        <h3>Nuevo exchange</h3>
+        <form [formGroup]="formExchange" (ngSubmit)="crearExchange()" class="formulario">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre</mat-label>
+            <input matInput formControlName="nombre" placeholder="pruebas.events" />
+            <mat-error>Letras, números, . _ - : (no puede comenzar con amq.)</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Tipo</mat-label>
+            <mat-select formControlName="tipo">
+              <mat-option *ngFor="let t of tiposExchange" [value]="t">{{ t }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-checkbox formControlName="durable">Durable</mat-checkbox>
+          <button mat-flat-button color="primary" type="submit">Crear exchange</button>
+        </form>
+      </mat-card>
+
+      <mat-card class="tarjeta">
+        <table mat-table [dataSource]="exchanges" class="tabla">
+          <ng-container matColumnDef="nombre">
+            <th mat-header-cell *matHeaderCellDef>Exchange</th>
+            <td mat-cell *matCellDef="let e">{{ e.nombre }}</td>
+          </ng-container>
+          <ng-container matColumnDef="tipo">
+            <th mat-header-cell *matHeaderCellDef>Tipo</th>
+            <td mat-cell *matCellDef="let e">{{ e.tipo }}</td>
+          </ng-container>
+          <ng-container matColumnDef="durable">
+            <th mat-header-cell *matHeaderCellDef>Durable</th>
+            <td mat-cell *matCellDef="let e">{{ e.durable ? 'Sí' : 'No' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let e" class="acciones">
+              <button mat-icon-button color="warn" matTooltip="Eliminar" (click)="eliminarExchange(e)"><mat-icon>delete</mat-icon></button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="columnasExchanges"></tr>
+          <tr mat-row *matRowDef="let row; columns: columnasExchanges"></tr>
+        </table>
+      </mat-card>
+    </mat-tab>
+
+    <!-- ─── Bindings ──────────────────────────────────────────────────── -->
+    <mat-tab label="Bindings ({{ bindings.length }})">
+      <mat-card class="tarjeta">
+        <h3>Nuevo binding</h3>
+        <form [formGroup]="formBinding" (ngSubmit)="crearBinding()" class="formulario">
+          <mat-form-field appearance="outline">
+            <mat-label>Exchange</mat-label>
+            <mat-select formControlName="exchange">
+              <mat-option *ngFor="let ex of exchanges" [value]="ex.nombre">{{ ex.nombre }}</mat-option>
+            </mat-select>
+            <mat-error>Obligatorio</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Routing key</mat-label>
+            <input matInput formControlName="routingKey" placeholder="mascota.*" />
+            <mat-error>Caracteres no permitidos</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Cola</mat-label>
+            <mat-select formControlName="cola">
+              <mat-option *ngFor="let c of colas" [value]="c.nombre">{{ c.nombre }}</mat-option>
+            </mat-select>
+            <mat-error>Obligatoria</mat-error>
+          </mat-form-field>
+          <button mat-flat-button color="primary" type="submit">Crear binding</button>
+        </form>
+      </mat-card>
+
+      <mat-card class="tarjeta">
+        <table mat-table [dataSource]="bindings" class="tabla">
+          <ng-container matColumnDef="exchange">
+            <th mat-header-cell *matHeaderCellDef>Exchange</th>
+            <td mat-cell *matCellDef="let b">{{ b.exchange }}</td>
+          </ng-container>
+          <ng-container matColumnDef="routingKey">
+            <th mat-header-cell *matHeaderCellDef>Routing key</th>
+            <td mat-cell *matCellDef="let b"><code>{{ b.routingKey || '(vacía)' }}</code></td>
+          </ng-container>
+          <ng-container matColumnDef="cola">
+            <th mat-header-cell *matHeaderCellDef>Cola</th>
+            <td mat-cell *matCellDef="let b">{{ b.cola }}</td>
+          </ng-container>
+          <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let b" class="acciones">
+              <button mat-icon-button color="warn" matTooltip="Eliminar" (click)="eliminarBinding(b)"><mat-icon>link_off</mat-icon></button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="columnasBindings"></tr>
+          <tr mat-row *matRowDef="let row; columns: columnasBindings"></tr>
+        </table>
+      </mat-card>
+    </mat-tab>
+
+    <!-- ─── Mensaje de prueba ─────────────────────────────────────────── -->
+    <mat-tab label="Publicar mensaje">
+      <mat-card class="tarjeta">
+        <h3>Publicar mensaje de prueba</h3>
+        <p class="ayuda">
+          Útil para probar la DLQ: publica en <code>sanos-salvos.events</code> con routing key
+          <code>mascota.perdida</code> un evento sin <code>usuarioId</code>. Los consumidores lo rechazarán y
+          aparecerá en <code>q.matching.dlq</code> y <code>q.geolocalizacion.dlq</code>.
+        </p>
+        <form [formGroup]="formMensaje" (ngSubmit)="publicar()" class="formulario columna">
+          <mat-form-field appearance="outline">
+            <mat-label>Exchange</mat-label>
+            <mat-select formControlName="exchange">
+              <mat-option *ngFor="let ex of exchanges" [value]="ex.nombre">{{ ex.nombre }}</mat-option>
+            </mat-select>
+            <mat-error>Obligatorio</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Routing key</mat-label>
+            <input matInput formControlName="routingKey" placeholder="mascota.perdida" />
+            <mat-error>Obligatoria, sin comodines</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Payload (JSON)</mat-label>
+            <textarea matInput formControlName="payload" rows="8" class="codigo"></textarea>
+          </mat-form-field>
+          <button mat-flat-button color="primary" type="submit">Publicar</button>
+        </form>
+      </mat-card>
+    </mat-tab>
+  </mat-tab-group>
+</div>
