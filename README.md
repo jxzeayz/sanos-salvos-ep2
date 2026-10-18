@@ -3,7 +3,7 @@
 **DSY1107 — Evaluación Encargo EA1 | DuocUC**
 **Estudiantes:** Armando Calderón
 **Docente:** Jorge Canales Soto
-**Repositorio:** https://github.com/jxzeayz/sanos-salvos-2
+**Repositorio:** https://github.com/jxzeayz/sanos-salvos-ep2.git
 
 ---
 
